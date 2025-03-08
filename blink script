@@ -1,0 +1,28 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local camera = workspace.CurrentCamera
+
+local function teleportAndReturn()
+    camera.CameraType = Enum.CameraType.Scriptable
+    local originalPosition = humanoidRootPart.Position
+    local targetPosition = originalPosition + (humanoidRootPart.CFrame.LookVector * 20000)
+
+    local tempPart = Instance.new("Part")
+    tempPart.Size = Vector3.new(10, 1, 10)
+    tempPart.Position = Vector3.new(targetPosition.X, targetPosition.Y - 0.5, targetPosition.Z)
+    tempPart.Anchored = true
+    tempPart.Parent = workspace
+
+    humanoidRootPart.CFrame = CFrame.new(targetPosition)
+    wait(4)
+    humanoidRootPart.CFrame = CFrame.new(originalPosition)
+
+    tempPart:Destroy()
+
+    camera.CameraType = Enum.CameraType.Custom
+end
+
+teleportAndReturn()
