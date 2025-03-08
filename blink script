@@ -1,28 +1,59 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local realCharacter = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = realCharacter:WaitForChild("HumanoidRootPart")
 local camera = workspace.CurrentCamera
 
-local function teleportAndReturn()
-    camera.CameraType = Enum.CameraType.Scriptable
-    local originalPosition = humanoidRootPart.Position
-    local targetPosition = originalPosition + (humanoidRootPart.CFrame.LookVector * 20000)
+local fakeCharacter
+local part
 
+local function createTemporaryPart(position)
     local tempPart = Instance.new("Part")
-    tempPart.Size = Vector3.new(10, 1, 10)
-    tempPart.Position = Vector3.new(targetPosition.X, targetPosition.Y - 0.5, targetPosition.Z)
+    tempPart.Size = Vector3.new(200, 1, 200)
     tempPart.Anchored = true
+    tempPart.CanCollide = true
     tempPart.Parent = workspace
+    return tempPart
+end
 
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-    wait(4)
-    humanoidRootPart.CFrame = CFrame.new(originalPosition)
+local function teleportAndReturn()
+    fakeCharacter = realCharacter:Clone()
+    fakeCharacter.Parent = workspace
 
-    tempPart:Destroy()
+    local targetPosition = humanoidRootPart.Position + (humanoidRootPart.CFrame.LookVector * 20000) + Vector3.new(0, -0.5, 0)
+    part = createTemporaryPart(targetPosition)
 
-    camera.CameraType = Enum.CameraType.Custom
+    for _, v in pairs(fakeCharacter:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Transparency = 0.7
+        end
+    end
+
+    humanoidRootPart.CFrame = CFrame.new(targetPosition + Vector3.new(0, 5, 0))
+
+    camera.CameraSubject = fakeCharacter.Humanoid
+    wait(6)
+    humanoidRootPart.CFrame = fakeCharacter.HumanoidRootPart.CFrame
+
+    camera.CameraSubject = realCharacter.Humanoid
+
+    part:Destroy()
+    fakeCharacter:Destroy()
 end
 
 teleportAndReturn()
+
+OrionLib:MakeNotification({
+	Name = "Anti Death Counter",
+	Content = "Trying To Delete Death Counter",
+	Image = "rbxassetid://7733658504",
+	Time = 3
+})
+wait(7)
+OrionLib:MakeNotification({
+	Name = "Anti Death Counter",
+	Content = "Success.",
+	Image = "rbxassetid://7733658504",
+	Time = 3
+})
