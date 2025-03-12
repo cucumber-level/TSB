@@ -1,0 +1,222 @@
+local RunService = game:GetService("RunService") -- for tpwalk
+local tpwalk = false -- base tpwalk true/false set
+local plr = game.Players.LocalPlayer
+local chr = plr.Character or plr.CharacterAdded:Wait()
+local hum = chr:FindFirstChild("Humanoid")
+local TTOValueToggle = false -- TTO 토글 상태
+local function teleportToEveryone()
+    local localPlayer = game.Players.LocalPlayer
+
+    -- workspace.Live 안의 모든 객체에 대해 텔레포트
+    for _, object in ipairs(workspace.Live:GetChildren()) do
+        if object:IsA("Model") and object:FindFirstChild("HumanoidRootPart") then
+            local humanoidRootPart = object.HumanoidRootPart
+            
+            -- 로컬 플레이어를 해당 객체의 HumanoidRootPart 위치로 텔레포트
+            if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                localPlayer.Character.HumanoidRootPart.CFrame = humanoidRootPart.CFrame
+            end
+            
+            wait(0.1) -- 다음 객체로 이동하기 전에 0.1초 대기
+        end
+    end
+end
+
+local function fixcam()
+		workspace.CurrentCamera:Destroy()
+	wait(0.1)
+	repeat wait() until chr ~= nil
+	workspace.CurrentCamera.CameraSubject = chr:FindFirstChildWhichIsA('Humanoid')
+	workspace.CurrentCamera.CameraType = "Custom"
+	plr.CameraMinZoomDistance = 0.5
+	plr.CameraMaxZoomDistance = 400
+	plr.CameraMode = "Classic"
+	plr.Character.Head.Anchored = false
+end
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/cucumber-level/UI/refs/heads/main/ReOrion')))() -- reorion ui library
+
+local Window = OrionLib:MakeWindow ({Name = "TSB | CUCUMBER", HidePremium = true, SaveConfig = false, ConfigFolder = "TSB CUCUMBER Config Folder", IntroEnabled = true, IntroText = "Welcome To Cucumber!", IntroIcon = "rbxassetid://7743873212"})
+
+local MainTab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://7733960981",
+	PremiumOnly = false
+})
+
+MainTab:AddToggle({
+	Name = "Teleport To Everyone Toggle",
+	Default = false,
+	Callback = function(TTOvalue)
+		TTOValueToggle = TTOvalue
+	end  
+})
+-- t 키를 눌렀을 때 teleportToObjects 함수 호출
+local UserInputService = game:GetService("UserInputService")
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent and input.KeyCode == Enum.KeyCode.T then
+        if TTOValueToggle then -- TTO가 활성화된 경우에만 호출
+            teleportToEveryone()
+        end
+    end
+end)
+
+MainTab:AddButton({
+	Name = "Fix Camera",
+	Callback = function()
+		fixcam()
+	end    
+})
+
+local PlayerTab = Window:MakeTab({
+	Name = "Player",
+	Icon = "rbxassetid://7743871002",
+	PremiumOnly = false
+})
+
+local TpwalkValue = 10 -- Tpwalk Base Speed
+
+PlayerTab:AddLabel("Tpwalk")
+
+PlayerTab:AddSlider({
+	Name = "TPwalk Speed",
+	Min = 1,
+	Max = 100,
+	Default = 10,
+	Increment = 1,
+	Callback = function(tpwalkspeedvalue)
+		TpwalkValue = tpwalkspeedvalue -- Slider Value Update
+	end    
+})
+
+PlayerTab:AddToggle({
+	Name = "TPwalk Toggle",
+	Default = false,
+	Callback = function(TpwalkToggleValue)
+		tpwalk = TpwalkToggleValue
+		if tpwalk then
+			-- start tpwalk
+			while tpwalk and chr and hum and hum.Parent do
+				local delta = RunService.Heartbeat:Wait()
+				if hum.MoveDirection.Magnitude > 0 then
+					chr:TranslateBy(hum.MoveDirection * TpwalkValue * delta * 5) -- tpwalk speed set
+				end
+			end
+		end
+	end    
+})
+
+local FunnyTab = Window:MakeTab({
+	Name = "Funny Thing",
+	Icon = "rbxassetid://7734059095",
+	PremiumOnly = false
+})
+
+local AntiTab = Window:MakeTab({
+	Name = "Anti",
+	Icon = "rbxassetid://7734056608",
+	PremiumOnly = false
+})
+
+local OpTab = Window:MakeTab({
+	Name = "OP",
+	Icon = "rbxassetid://7733765398",
+	PremiumOnly = false
+})
+
+local TeleportTab = Window:MakeTab({
+	Name = "Teleport",
+	Icon = "rbxassetid://7734068321",
+	PremiumOnly = false
+})
+
+TeleportTab:AddButton({
+	Name = "Death Counter",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-64.5597916, 29.2539902, 20336.3984, 1, 3.91917609e-08, -1.28359779e-12, -3.91917609e-08, 1, -9.79694761e-08, 1.2797582e-12, 9.79694761e-08, 1)
+	end    
+})
+
+TeleportTab:AddButton({
+	Name = "Atomic Slash",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1064.5376, 131.290161, 23007.7812, 1, 1.05433102e-08, -8.13391834e-13, -1.05433102e-08, 1, -1.21504051e-08, 8.13263682e-13, 1.21504051e-08, 1)
+	end    
+})
+
+TeleportTab:AddButton({
+	Name = "Corner",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-270.402374, 439.510559, -451.001343, -0.99977386, -6.15938305e-08, 0.0212658495, -6.13704572e-08, 1, 1.11564527e-08, -0.0212658495, 9.84883464e-09, -0.99977386)
+	end    
+})
+
+TeleportTab:AddButton({
+	Name = "Cave Diver",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(438.432861, 439.510559, -376.407867, -0.7437796, 3.87976407e-08, 0.668424964, 4.35907808e-08, 1, -9.53840296e-09, -0.668424964, 2.20426948e-08, -0.7437796)
+	end    
+})
+
+TeleportTab:AddButton({
+	Name = "Mountain",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0.876285851, 652.52124, -360.357178, -0.943775773, -7.2188775e-09, -0.330586284, -3.90281008e-09, 1, -1.06946363e-08, 0.330586284, -8.80312268e-09, -0.943775773)
+	end    
+})
+
+TeleportTab:AddButton({
+	Name = "Middle",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(107.127121, 439.510559, -70.7263489, -0.93037796, -4.32043592e-08, -0.366601825, -1.12782725e-08, 1, -8.9228422e-08, 0.366601825, -7.888152e-08, -0.93037796)
+	end    
+})
+
+TeleportTab:AddButton({
+	Name = "Weakest Dummy",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Live:FindFirstChild("Weakest Dummy").HumanoidRootPart.CFrame
+	end    
+})
+
+local OtherTab = Window:MakeTab({
+	Name = "Other",
+	Icon = "rbxassetid://7733993211",
+	PremiumOnly = false
+})
+
+OtherTab:AddButton({
+	Name = "Destroy This UI",
+	Callback = function()
+		OrionLib:Destroy()
+	end    
+})
+
+OtherTab:AddButton({
+	Name = "Infinite Yield Script",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+	end    
+})
+
+local CreditTab = Window:MakeTab({
+	Name = "Credit",
+	Icon = "rbxassetid://7733955511",
+	PremiumOnly = false
+})
+
+CreditTab:AddButton({
+	Name = "Discord Link ( Korean )",
+	Callback = function()
+		setclipboard("https://discord.gg/ybMCKwTdbB")
+	end    
+})
+
+-- 캐릭터가 죽었을 때의 처리
+hum.Died:Connect(function()
+    OrionLib:Destroy() -- OrionLib를 파괴합니다.
+    wait(1) -- 잠시 대기 후 스크립트를 다시 실행합니다.
+    loadstring(game:HttpGet(''))() -- 스크립트를 다시 실행합니다.
+end)
+
+OrionLib:Init()
