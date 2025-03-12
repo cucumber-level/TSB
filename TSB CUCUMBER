@@ -216,7 +216,7 @@ CreditTab:AddButton({
 hum.Died:Connect(function()
     OrionLib:Destroy() -- OrionLib를 파괴합니다.
     wait(1) -- 잠시 대기 후 스크립트를 다시 실행합니다.
-    loadstring(game:HttpGet(''))() -- 스크립트를 다시 실행합니다.
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/cucumber-level/TSB/refs/heads/main/TSB%20CUCUMBER'))() -- 스크립트를 다시 실행합니다.
 end)
 
 OrionLib:Init()
